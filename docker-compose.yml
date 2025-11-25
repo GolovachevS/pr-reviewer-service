@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:15
+    container_name: pr-reviewer-db
+    environment:
+      POSTGRES_DB: reviewers
+      POSTGRES_USER: reviewer
+      POSTGRES_PASSWORD: reviewer
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - services-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "reviewer", "-d", "reviewers"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  app:
+    build: .
+    container_name: pr-reviewer-app
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    networks:
+      - services-network
+    restart: unless-stopped
+
+networks:
+  services-network:
+    driver: bridge
+
+volumes:
+  pgdata:
