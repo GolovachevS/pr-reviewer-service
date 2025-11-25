@@ -9,15 +9,21 @@ import (
 	"github.com/GolovachevS/pr-reviewer-service/internal/service"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // Store implements the service.Repository interface using PostgreSQL.
-type Store struct {
-	pool *pgxpool.Pool
+type pgxPool interface {
+	BeginTx(ctx context.Context, txOptions pgx.TxOptions) (pgx.Tx, error)
+	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
+	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
+	Exec(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error)
 }
 
-func New(pool *pgxpool.Pool) *Store {
+type Store struct {
+	pool pgxPool
+}
+
+func New(pool pgxPool) *Store {
 	return &Store{pool: pool}
 }
 
