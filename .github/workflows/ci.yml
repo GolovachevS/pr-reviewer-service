@@ -18,8 +18,8 @@ jobs:
         uses: golangci/golangci-lint-action@v6
         with:
           version: latest
-          args: -c golangci.yml ./...
-  
+          args: ./...
+
   test:
     runs-on: ubuntu-latest
     needs: lint

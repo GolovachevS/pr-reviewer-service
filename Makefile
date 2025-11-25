@@ -1,7 +1,7 @@
 APP_NAME=pr-reviewer-service
 BINARY=bin/pr-reviewer-service
 
-.PHONY: build run tidy docker-build compose-up compose-down
+.PHONY: build run tidy lint docker-build compose-up compose-down
 
 build:
 	go build -o $(BINARY) ./cmd/
@@ -11,6 +11,9 @@ run:
 
 tidy:
 	go mod tidy
+
+lint:
+	golangci-lint run ./...
 
 docker-build:
 	docker build -t $(APP_NAME) .
