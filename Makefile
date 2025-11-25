@@ -9,6 +9,9 @@ build:
 run:
 	go run ./cmd/
 
+test:
+	go test ./...
+
 tidy:
 	go mod tidy
 
